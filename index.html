@@ -73,7 +73,7 @@
     <div class="w-full px-3 pt-3 flex flex-col items-center">
       <div class="w-full flex justify-between items-center mb-1">
         <span class="text-yellow-300 jp" style="font-weight:900;">じゃんけん5回勝負</span>
-        <button id="bgmBtn" class="bg-black/50 rounded-lg px-2 py-1 text-lg">🔇</button>
+        <button id="bgmBtn" class="bg-black/50 rounded-lg px-2 py-1" style="font-size:clamp(2rem, 10vw, 4rem); line-height:1;">🔇</button>
       </div>
       <table id="scoreTable" class="jp text-center text-white text-sm" style="font-weight:900;">
         <thead><tr class="text-xs">
@@ -87,13 +87,13 @@
       <div class="flex flex-col items-center gap-1">
         <div id="youBubble" class="bubble text-4xl">？</div>
         <img id="youImg" class="char-img" src="penguin.png" alt="ペンギン（あなた）">
-        <div class="text-sky-300 jp text-sm" style="font-weight:900;">あなた</div>
+        
       </div>
       <div class="text-white pixel text-xl" style="text-shadow:0 0 10px #ffd700;">VS</div>
       <div class="flex flex-col items-center gap-1">
         <div id="cpuBubble" class="bubble text-4xl">？</div>
         <img id="cpuImg" class="char-img" src="boy.png" alt="男の子" style="transform:scaleX(-1);">
-        <div class="text-pink-300 jp text-sm" style="font-weight:900;">男の子</div>
+        
       </div>
     </div>
 
@@ -101,9 +101,9 @@
     <div id="arrow" class="arrow" style="visibility:hidden;">⬇</div>
 
     <div id="choices" class="w-full px-4 pb-5 pt-1 grid grid-cols-3 gap-3" style="max-width:560px;">
-      <button class="choice-btn jp" data-hand="0"><span class="text-5xl">✊</span><span class="text-xs font-bold">グー</span></button>
-      <button class="choice-btn jp" data-hand="1"><span class="text-5xl">✌️</span><span class="text-xs font-bold">チョキ</span></button>
-      <button class="choice-btn jp" data-hand="2"><span class="text-5xl">🖐</span><span class="text-xs font-bold">パー</span></button>
+      <button class="choice-btn jp" data-hand="0"><span class="text-9xl">✊</span><span class="text-xs font-bold">グー</span></button>
+      <button class="choice-btn jp" data-hand="1"><span class="text-9xl">✌️</span><span class="text-xs font-bold">チョキ</span></button>
+      <button class="choice-btn jp" data-hand="2"><span class="text-9xl">🖐</span><span class="text-xs font-bold">パー</span></button>
     </div>
 
     <div id="flash"></div>
