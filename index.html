@@ -152,18 +152,45 @@
         s.connect(g); g.connect(c.destination); s.start();
       }catch(e){}
     }
-    // ゆっくり・はっきり話す
+    }catch(e){}
+    }
+    // ゆっくり・はっきり話す　←ここから貼り付け
     function speak(text, pitch, rate){
       try{
         speechSynthesis.cancel();
-        const u=new SpeechSynthesisUtterance(text);
-        u.lang='ja-JP'; u.pitch=(pitch!=null?pitch:1.2); u.rate=(rate!=null?rate:0.75); u.volume=1.0;
-        const vs=speechSynthesis.getVoices(); let v=null;
-        for(const voice of vs){ if(voice.lang.startsWith('ja')){ v=voice; if(/Female|female|女/.test(voice.name)) break; } }
-        if(v) u.voice=v;
-        speechSynthesis.speak(u);
+        const u = new SpeechSynthesisUtterance(text);
+        u.lang = 'ja-JP';
+        u.pitch = (pitch != null ? pitch : 1.2);
+        u.rate = (rate != null ? rate : 0.75);
+        u.volume = 1.0;
+
+        const trySpeak = () => {
+          const vs = speechSynthesis.getVoices();
+          let v = null;
+          for(const voice of vs){
+            if(voice.name === 'Google 日本語'){ v = voice; break; }
+          }
+          if(!v){
+            for(const voice of vs){
+              if(voice.lang === 'ja-JP'){ v = voice; break; }
+            }
+          }
+          if(v) u.voice = v;
+          speechSynthesis.speak(u);
+        };
+
+        const vs = speechSynthesis.getVoices();
+        if(vs.length > 0){
+          trySpeak();
+        } else {
+          speechSynthesis.onvoiceschanged = () => {
+            speechSynthesis.onvoiceschanged = null;
+            trySpeak();
+          };
+        }
       }catch(e){}
     }
+    // ===== BGM =====　←ここまで貼り付け
 
     // ===== BGM =====
     let bgmOn=false, bgmTimer=null, bgmStep=0;
