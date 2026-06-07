@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>じゃんけん5回勝負</title>
   <script src="https://cdn.tailwindcss.com/3.4.17"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&amp;family=Noto+Sans+JP:wght@700;900&amp;display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Noto+Sans+JP:wght@700;900&display=swap" rel="stylesheet">
   <style>
     html, body {
       height: 100%; margin: 0; padding: 0; overflow: hidden;
@@ -54,9 +54,9 @@
       content:''; position:absolute; bottom:-10px; left:50%; transform:translateX(-50%);
       border-left:10px solid transparent; border-right:10px solid transparent; border-top:12px solid #fff;
     }
-    .char-img { height: 28vh; max-height: 255px; width:auto; filter: drop-shadow(0 6px 8px rgba(0,0,0,0.4)); } /* 1.5倍 */
+    .char-img { height: 42vh; max-height: 382px; width:auto; filter: drop-shadow(0 6px 8px rgba(0,0,0,0.4)); }
     #scoreTable { border-collapse:collapse; }
-    #scoreTable td, #scoreTable th { border:1px solid rgba(255,255,255,0.3); padding:3px 15px; font-size:1.3rem; } /* 1.5倍 */
+    #scoreTable td, #scoreTable th { border:1px solid rgba(255,255,255,0.3); padding:3px 15px; font-size:1.3rem; }
     .curRow { background: rgba(255,215,0,0.18); }
     #flash { position:absolute; inset:0; z-index:70; pointer-events:none; opacity:0; transition:opacity 0.15s; }
     #finale {
@@ -70,7 +70,6 @@
  </head>
  <body class="h-full w-full">
   <div class="wrap" id="wrap">
-    <!-- 上部：タイトル・BGM・対戦表 -->
     <div class="w-full px-3 pt-3 flex flex-col items-center">
       <div class="w-full flex justify-between items-center mb-1">
         <span class="text-yellow-300 jp" style="font-weight:900;">じゃんけん5回勝負</span>
@@ -84,7 +83,6 @@
       </table>
     </div>
 
-    <!-- 対戦エリア（左：ペンギン＝あなた / 右：男の子） -->
     <div class="flex-1 w-full flex items-center justify-around px-2 relative" style="max-width:680px;">
       <div class="flex flex-col items-center gap-1">
         <div id="youBubble" class="bubble text-4xl">？</div>
@@ -99,12 +97,9 @@
       </div>
     </div>
 
-    <!-- メッセージ -->
     <div id="message" class="jp text-center text-2xl text-white h-9 px-4" style="font-weight:900; text-shadow:0 2px 6px rgba(0,0,0,0.6);">スタート！</div>
-    <!-- 矢印（じゃんけんぽんの後に出る） -->
     <div id="arrow" class="arrow" style="visibility:hidden;">⬇</div>
 
-    <!-- 選択ボタン -->
     <div id="choices" class="w-full px-4 pb-5 pt-1 grid grid-cols-3 gap-3" style="max-width:560px;">
       <button class="choice-btn jp" data-hand="0"><span class="text-5xl">✊</span><span class="text-xs font-bold">グー</span></button>
       <button class="choice-btn jp" data-hand="1"><span class="text-5xl">✌️</span><span class="text-xs font-bold">チョキ</span></button>
@@ -152,9 +147,8 @@
         s.connect(g); g.connect(c.destination); s.start();
       }catch(e){}
     }
-    }catch(e){}
-    }
-    // ゆっくり・はっきり話す　←ここから貼り付け
+
+    // ===== 音声読み上げ（ChromeとEdge統一版）=====
     function speak(text, pitch, rate){
       try{
         speechSynthesis.cancel();
@@ -167,9 +161,11 @@
         const trySpeak = () => {
           const vs = speechSynthesis.getVoices();
           let v = null;
+          // ChromeもEdgeも両方にある「Google 日本語」を優先
           for(const voice of vs){
             if(voice.name === 'Google 日本語'){ v = voice; break; }
           }
+          // なければ ja-JP の音声を使う
           if(!v){
             for(const voice of vs){
               if(voice.lang === 'ja-JP'){ v = voice; break; }
@@ -183,6 +179,7 @@
         if(vs.length > 0){
           trySpeak();
         } else {
+          // 音声リストがまだ読み込まれていない場合（Edgeで起きやすい）
           speechSynthesis.onvoiceschanged = () => {
             speechSynthesis.onvoiceschanged = null;
             trySpeak();
@@ -190,7 +187,6 @@
         }
       }catch(e){}
     }
-    // ===== BGM =====　←ここまで貼り付け
 
     // ===== BGM =====
     let bgmOn=false, bgmTimer=null, bgmStep=0;
@@ -215,7 +211,6 @@
     const buttons=[...document.querySelectorAll('.choice-btn')];
     function setButtons(on){ buttons.forEach(b=>b.disabled=!on); }
 
-    // 表を作成
     function buildTable(){
       tbody.innerHTML='';
       for(let i=1;i<=TOTAL;i++){
@@ -228,7 +223,6 @@
 
     function doFlash(color){ flash.style.background=color; flash.style.opacity='1'; setTimeout(()=>flash.style.opacity='0',180); }
 
-    // 1ラウンド開始（じゃんけん…ぽん→矢印で選択）
     function startRound(){
       highlightRow(round);
       youBubble.textContent='？'; cpuBubble.textContent='？';
@@ -259,10 +253,9 @@
       if(result==='draw'){
         msg.textContent='あいこ！もう一回！'; doFlash('radial-gradient(circle, rgba(255,255,255,0.5), rgba(255,255,255,0))');
         drawSound(); speak('あいこでしょ');
-        setTimeout(()=>{ busy=false; startRound(); }, 1500); // 同じ回をやり直し
+        setTimeout(()=>{ busy=false; startRound(); }, 1500);
         return;
       }
-      // 表に記入
       document.getElementById('b'+round).textContent=HANDS[cpuHand].emoji;
       document.getElementById('y'+round).textContent=HANDS[playerHand].emoji;
       if(result==='win'){ wins++; document.getElementById('r'+round).textContent='○'; document.getElementById('r'+round).style.color='#ffd700';
@@ -284,7 +277,6 @@
       b.addEventListener('touchstart', handler, {passive:false});
     });
 
-    // ===== 最終結果 =====
     function doFinale(){
       highlightRow(0);
       const youWin = wins>loses;
@@ -312,7 +304,6 @@
       startRound();
     });
 
-    // ===== 演出 =====
     function fireworksShow(){
       const colors=['#ff4757','#ffd700','#00d2d3','#ff6b81','#7bed9f','#ff9ff3','#54a0ff'];
       let count=0;
@@ -356,13 +347,11 @@
       const iv=setInterval(()=>{ flashIt(); count++; if(count>=3) clearInterval(iv); }, 1100);
     }
 
-    // スマホ挙動抑止
     document.addEventListener('gesturestart', e=>e.preventDefault());
     document.addEventListener('contextmenu', e=>e.preventDefault());
     let lastTouch=0;
     document.addEventListener('touchend', e=>{ const n=Date.now(); if(n-lastTouch<=300) e.preventDefault(); lastTouch=n; }, {passive:false});
 
-    // 初期化
     buildTable();
     setTimeout(startRound, 600);
   </script>
