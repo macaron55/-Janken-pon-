@@ -34,11 +34,12 @@
   .fist.on { animation:fistpump 0.4s ease-in-out infinite; }
   @keyframes fistpop { 0%{transform:scale(0.5)} 60%{transform:scale(1.25)} 100%{transform:scale(1)} }
   .fist.reveal { animation:fistpop 0.6s ease-out; }
-  .glowwrap { position:relative; display:inline-flex; align-items:center; justify-content:center; animation:sparkleGlow 1.1s ease-in-out infinite; }
+  .glowwrap { position:relative; display:inline-flex; align-items:center; justify-content:center; }
+  .glowwrap.sparkle { animation:sparkleGlow 1.1s ease-in-out infinite; }
   @keyframes sparkleGlow { 0%,100%{filter:drop-shadow(0 0 4px rgba(255,255,255,0.6)) drop-shadow(0 0 8px rgba(255,215,0,0.5))} 50%{filter:drop-shadow(0 0 10px rgba(255,255,255,0.95)) drop-shadow(0 0 20px rgba(255,215,0,0.9))} }
-  .glowwrap::before, .glowwrap::after { content:'✨'; position:absolute; font-size:0.45em; pointer-events:none; animation:twinkle 0.9s ease-in-out infinite; }
-  .glowwrap::before { top:-4px; right:-6px; }
-  .glowwrap::after { bottom:-2px; left:-8px; animation-delay:0.45s; }
+  .glowwrap.sparkle::before, .glowwrap.sparkle::after { content:'✨'; position:absolute; font-size:0.45em; pointer-events:none; animation:twinkle 0.9s ease-in-out infinite; }
+  .glowwrap.sparkle::before { top:-4px; right:-6px; }
+  .glowwrap.sparkle::after { bottom:-2px; left:-8px; animation-delay:0.45s; }
   @keyframes twinkle { 0%,100%{opacity:0; transform:scale(0.3)} 50%{opacity:1; transform:scale(1.1)} }
 
   /* ペンギン・トークン */
@@ -172,8 +173,10 @@
   const jbox=document.createElement('div'); jbox.className='jbox'; arenaEl.appendChild(jbox);
   function addFist(){ const f=document.createElement('span'); f.className='fist'; f.textContent='✊'; jbox.appendChild(f); return f; }
   const youFist=addFist();
-  const glow=document.createElement('span'); glow.className='glowwrap'; jbox.insertBefore(glow,youFist); glow.appendChild(youFist);
-  const jdiv=document.createElement('div'); jdiv.className='jdiv'; jbox.appendChild(jdiv); const cpuFist=addFist();
+  const glowY=document.createElement('span'); glowY.className='glowwrap'; jbox.insertBefore(glowY,youFist); glowY.appendChild(youFist);
+  const jdiv=document.createElement('div'); jdiv.className='jdiv'; jbox.appendChild(jdiv);
+  const cpuFist=addFist();
+  const glowC=document.createElement('span'); glowC.className='glowwrap'; jbox.insertBefore(glowC,cpuFist); glowC.appendChild(cpuFist);
 
   function buildTokens(){ pool.innerHTML=''; leftStack.innerHTML=''; rightStack.innerHTML='';
     for(let i=0;i<TOTAL;i++){ const im=document.createElement('img'); im.className='pgn'; im.src=PENGUIN_SRC; im.alt='ペンギン'; pool.appendChild(im); } }
@@ -193,7 +196,7 @@
   // ラウンド開始：じゃんけんは出さない。ボタンを押すと出る。
   function startRound(){
     youImg.classList.remove('jumping'); cpuImg.classList.remove('jumping');
-    jbox.classList.remove('show');
+    jbox.classList.remove('show'); glowY.classList.remove('sparkle'); glowC.classList.remove('sparkle');
     youFist.className='fist'; cpuFist.className='fist'; youFist.textContent='✊🏼'; cpuFist.textContent='✊🏻';
     msg.textContent='♡をおしてね♡';
     busy=false; canPick=false; setButtons(false);
@@ -219,9 +222,9 @@
       if(result==='draw'){ msg.textContent='あいこ！もう一回！';
         doFlash('radial-gradient(circle, rgba(255,255,255,0.5), rgba(255,255,255,0))'); drawSound(); speak('あいこでしょ');
         setTimeout(()=>{ startRound(); }, 1500); return; }
-      if(result==='win'){ wins++; moveToken('left');
+      if(result==='win'){ wins++; moveToken('left'); glowY.classList.add('sparkle');
         msg.textContent='あなたの勝ち！'; doFlash('radial-gradient(circle, rgba(255,215,0,0.7), rgba(255,140,0,0.1))'); winSound(); speak('かち');
-      } else { loses++; moveToken('right');
+      } else { loses++; moveToken('right'); glowC.classList.add('sparkle');
         msg.textContent='男の子の勝ち…'; doFlash('radial-gradient(circle, rgba(60,80,160,0.8), rgba(10,10,30,0.3))'); loseSound(); speak('まけ'); }
       setTimeout(()=>{ if(round>=TOTAL){ doFinale(); } else { round++; startRound(); } }, 1700);
     }, 1900);
